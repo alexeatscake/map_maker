@@ -14,15 +14,22 @@ A Python-based procedural map generation tool that creates detailed terrain maps
 
 ```text
 map_maker/
-├── py_script/           # Core Python scripts
-│   ├── make_base_map.py    # Generates initial terrain grid
-│   ├── make_big_hex.py     # Expands base map using tile patterns
-│   ├── generate_hex.py     # Converts PNG tiles to CSV hex data
-│   └── big_hex_to_image.py # Converts final CSV to PNG image
-├── hex_grid/           # CSV files with hex color data (20x20 tiles)
-├── pixel_image/        # PNG tile images (20x20 pixels)
-├── made_maps/          # Generated output maps
-└── pyproject.toml      # Project dependencies
+├── src/
+│   └── map_maker/          # Core Python package
+│       ├── __init__.py        # Package initialization
+│       └── tiles.py           # Tile processing and conversion functions
+├── py_script/              # Command-line scripts
+│   ├── make_base_map.py       # Generates initial terrain grid
+│   ├── make_big_hex.py        # Expands base map using tile patterns
+│   ├── generate_hex.py        # Converts PNG tiles to CSV hex data
+│   └── big_hex_to_image.py    # Converts final CSV to PNG image
+├── tests/                  # Test suite
+│   ├── conftest.py           # Pytest fixtures
+│   └── test_tiles.py         # Tests for tiles module
+├── hex_grid/              # CSV files with hex color data (20x20 tiles)
+├── pixel_image/           # PNG tile images (20x20 pixels)
+├── made_maps/             # Generated output maps
+└── pyproject.toml         # Project dependencies and configuration
 ```
 
 ## How It Works
@@ -60,6 +67,33 @@ The map generation process follows a 4-step pipeline:
 - Each cell becomes a pixel with the specified hex color
 - Outputs: `made_maps/expanded_map.png`
 
+## Modular Architecture
+
+The project has been refactored into a modular structure for better maintainability and testability:
+
+### Core Package (`src/map_maker/`)
+
+- **`tiles.py`** - Contains reusable functions for image processing:
+  - `png_to_hex_grid()` - Converts PNG images to hex color grids
+  - `save_hex_grid_to_csv()` - Saves hex grids to CSV files
+  - `convert_png_to_hex_csv()` - Complete PNG to CSV conversion
+
+### Command-Line Scripts (`py_script/`)
+
+The scripts now use the modular functions for cleaner, more maintainable code:
+
+- Scripts follow the `if __name__ == "__main__"` pattern
+- Functions can be imported and reused in other contexts
+- Better error handling and type hints throughout
+
+### Test Suite (`tests/`)
+
+Comprehensive test coverage ensures reliability:
+
+- **`conftest.py`** - Pytest fixtures for temporary files and test data
+- **`test_tiles.py`** - Unit tests for all tile processing functions
+- Tests cover both happy path and error conditions
+
 ## Terrain Tile System
 
 The project includes 29 pre-designed terrain tiles covering all possible 2x2 combinations:
@@ -75,26 +109,62 @@ The project includes 29 pre-designed terrain tiles covering all possible 2x2 com
 - **Pillow** (≥11.2.1) - Image processing and PNG generation
 - **numpy** - Numerical operations for grid processing
 - **matplotlib** (≥3.10.3) - Visualization support
+- **pytest** - Testing framework (development)
 
 ## Usage
+
+### Command-Line Scripts
 
 Run the complete map generation pipeline:
 
 ```bash
 # 1. Generate base terrain grid
-python py_script/make_base_map.py
+python3 py_script/make_base_map.py
 
 # 2. Expand using tile patterns and create detailed map
-python py_script/make_big_hex.py
+python3 py_script/make_big_hex.py
 
 # 3. Convert final map to PNG image
-python py_script/big_hex_to_image.py
+python3 py_script/big_hex_to_image.py
 ```
 
-Or if you have new PNG tiles to convert to hex format:
+Convert PNG tiles to hex CSV format:
 
 ```bash
-python py_script/generate_hex.py
+python3 py_script/generate_hex.py
+```
+
+### Programmatic Usage
+
+You can also use the modular functions directly in your own code:
+
+```python
+from map_maker.tiles import convert_png_to_hex_csv
+from pathlib import Path
+
+# Convert a single PNG to hex CSV
+convert_png_to_hex_csv("my_tile.png", "output.csv")
+
+# Or use individual functions for more control
+from map_maker.tiles import png_to_hex_grid, save_hex_grid_to_csv
+
+hex_grid = png_to_hex_grid(Path("my_tile.png"))
+save_hex_grid_to_csv(hex_grid, "custom_output.csv")
+```
+
+### Running Tests
+
+To run the test suite:
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=map_maker
+
+# Run specific test file
+pytest tests/test_tiles.py
 ```
 
 ## Output
