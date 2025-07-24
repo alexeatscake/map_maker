@@ -1,7 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "map-maker"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Python-based procedural map generation tool that creates detailed terrain maps using tile patterns"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -9,3 +13,88 @@ dependencies = [
     "pandas>=2.3.0",
     "pillow>=11.2.1",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=4.2.0",
+    "pytest>=8.4.1",
+    "pytest-cov>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/alexeatscake/map_maker"
+"Bug Tracker" = "https://github.com/alexeatscake/map_maker/issues"
+Discussions = "https://github.com/alexeatscake/map_maker/discussions"
+Changelog = "https://github.com/alexeatscake/map_maker/releases"
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = ["-ra", "--showlocals", "--strict-markers", "--strict-config"]
+xfail_strict = true
+filterwarnings = [
+  "error",
+]
+log_cli_level = "INFO"
+testpaths = [
+  "tests",
+]
+
+[tool.coverage]
+run.source = ["map_maker"]
+port.exclude_lines = [
+  'pragma: no cover',
+  '\.\.\.',
+  'if typing.TYPE_CHECKING:',
+]
+
+[tool.mypy]
+files = ["src", "tests"]
+python_version = "3.12"
+show_error_codes = true
+warn_unreachable = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+strict = false
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
+
+[tool.ruff]
+src = ["src"]
+exclude = []
+line-length = 88  # how long you want lines to be
+
+[tool.ruff.format]
+docstring-code-format = true  # code snippets in docstrings will be formatted
+
+[tool.ruff.lint]
+select = [
+  "E", "F", "W", # flake8
+  "B",           # flake8-bugbear
+  "I",           # isort
+  "ARG",         # flake8-unused-arguments
+  "C4",          # flake8-comprehensions
+  "EM",          # flake8-errmsg
+  "ICN",         # flake8-import-conventions
+  "ISC",         # flake8-implicit-str-concat
+  "G",           # flake8-logging-format
+  "PGH",         # pygrep-hooks
+  "PIE",         # flake8-pie
+  "PL",          # pylint
+  "PT",          # flake8-pytest-style
+  "RET",         # flake8-return
+  "RUF",         # Ruff-specific
+  "SIM",         # flake8-simplify
+  "UP",          # pyupgrade
+  "YTT",         # flake8-2020
+  "EXE",         # flake8-executable
+]
+ignore = [
+  "PLR",    # Design related pylint codes
+  "ISC001", # Conflicts with formatter
+]
+unfixable = [
+  "F401",   # Would remove unused imports
+  "F841",   # Would remove unused variables
+]
+flake8-unused-arguments.ignore-variadic-names = true
