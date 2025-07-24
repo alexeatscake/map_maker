@@ -7,14 +7,14 @@ import pytest
 from PIL import Image
 
 
-@pytest.fixture
+@pytest.fixture()
 def temp_dir():
     """Create a temporary directory for test files."""
     with tempfile.TemporaryDirectory() as tmp_dir:
         yield Path(tmp_dir)
 
 
-@pytest.fixture
+@pytest.fixture()
 def sample_png_file(temp_dir):
     """Create a small sample PNG file for testing."""
     # Create a simple 3x3 image with known colors
@@ -37,7 +37,7 @@ def sample_png_file(temp_dir):
     return png_path
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_hex_grid():
     """Expected hex color grid for the sample PNG."""
     return [
