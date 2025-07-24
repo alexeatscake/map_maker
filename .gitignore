@@ -10,7 +10,12 @@ wheels/
 .venv
 
 # Generated maps
-made_maps/
+made_maps/*
+!made_maps/README.md
+
+# Generated hex grids
+hex_grid/*
+!hex_grid/README.md
 
 # macOS files
 .DS_Store
